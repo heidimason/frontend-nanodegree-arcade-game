@@ -1,3 +1,17 @@
 body {
+	background-color: black;
     text-align: center;
+}
+
+h1 {
+	font-family: Arial, sans-serif;
+	margin-top: 0;
+}
+
+h1.collision-messages {
+	color: red;
+}
+
+h1.success-messages {
+	color: green;
 }

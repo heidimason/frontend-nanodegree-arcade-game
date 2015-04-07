@@ -1,10 +1,8 @@
-var canvasWidth = 505, // canvas.width per engine.js
-    numberHorizontalBlocks = 5,
-    halfCanvasWidth = (canvasWidth / numberHorizontalBlocks) * 2,
-    oneBlock = canvasWidth / numberHorizontalBlocks,
-    halfBlock = oneBlock / 2,
-    health = 100,
-    score = 0;
+var canvasWidth = 505, // ctx.canvas.width per engine.js
+    numCol = 5, // Also per engine.js
+    halfCanvasWidth = (canvasWidth / numCol) * 2,
+    oneBlock = canvasWidth / numCol,
+    halfBlock = oneBlock / 2;
 
 function generateRandomNumber(bottomNumber, topNumber) {
     return Math.random() * (topNumber - bottomNumber) + bottomNumber;
@@ -35,7 +33,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x = this.x + dt * 300; // TODO: Increase speed each time player wins
+    this.x = this.x + dt * 100; // TODO: Increase speed each time player wins
 
     if (this.x > canvasWidth) {
         this.x = 0; // Loops enemies
@@ -43,8 +41,14 @@ Enemy.prototype.update = function(dt) {
     }
 
     if ( this.y === player.y && rangeCheck(player.x, this.x) ) { // Moves player back to starting point in the case of enemy collision
-        health -= 10;
-        alert('Ouch!\nHealth: ' + health + '%');
+        player.health -= 10;
+        if (player.health > 0) {
+            $('h1#collisionMessages').text('Ouch! Health: ' + player.health + '/100');
+        } else {
+            $('h1#collisionMessages').text('Game Over');
+            $('h1#successMessages').remove();
+            bogusCode // Stops game - not sure how to do this properly!
+        }
         player.x = halfCanvasWidth;
         player.y = 375;
     }
@@ -62,16 +66,19 @@ var Player = function(xCoordinate, yCoordinate) {
     this.sprite = 'images/char-princess-girl.png';
     this.x = xCoordinate;
     this.y = yCoordinate;
+    this.health = 100;
+    this.score = 0;
+    this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!'];
+    this.randomSuccessMessage = Math.floor( Math.random() * 3 );
 };
 
 Player.prototype.update = function() {
-
     this.x = this.x;
     this.y = this.y;
 
-    if (this.y === 0) { // When player reaches water
-        score += 1; // Increases score by 1
-        alert('Player triumphs over enemies!\nScore: ' + score);
+    if (this.y === 0) { // When player reaches water,
+        this.score += 1; // increase score by 1
+        $('h1#successMessages').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/10');
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
    }
