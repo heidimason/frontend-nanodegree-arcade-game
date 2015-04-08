@@ -1,23 +1,23 @@
 var canvasWidth = 505, // ctx.canvas.width per engine.js
     numCol = 5, // Also per engine.js
-    halfCanvasWidth = (canvasWidth / numCol) * 2,
-    oneBlock = canvasWidth / numCol,
-    halfBlock = oneBlock / 2;
+    blockWidth = canvasWidth / numCol,
+    halfCanvasWidth = (canvasWidth / 2) - (blockWidth / 2),
+    spriteWidth = 101,
+    halfSprite = spriteWidth / 2;
 
 function generateRandomNumber(bottomNumber, topNumber) {
     return Math.random() * (topNumber - bottomNumber) + bottomNumber;
 }
 
-function rangeCheck(p1, p2) {
-    if (p2 > p1 - halfBlock && p2 < p1 + halfBlock) {
+function checkCollision(p1, p2) {
+    if (p2 > p1 - halfSprite && p2 < p1 + halfSprite) {
         return true;
     }
 }
 
 // Enemies our player must avoid
 var Enemy = function(xCoordinate, yCoordinate) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+    // Variables applied to each of our instances go here
 
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
@@ -37,17 +37,18 @@ Enemy.prototype.update = function(dt) {
 
     if (this.x > canvasWidth) {
         this.x = 0; // Loops enemies
-        this.y = Math.round( generateRandomNumber(1, 3) ) * 75; // Keeps enemies on stone blocks
+        this.y = Math.round( generateRandomNumber(1, 3) ) * 75; // Possibilities = 75, 150, or 225 (75 chosen over 83 (blockHeight) because it keeps enemies on stone blocks)
+        // console.log(this.y);
     }
 
-    if ( this.y === player.y && rangeCheck(player.x, this.x) ) { // Moves player back to starting point in the case of enemy collision
+    if ( this.y === player.y && checkCollision(player.x, this.x) ) { // Moves player back to starting point in the case of enemy collision
         player.health -= 10;
         if (player.health > 0) {
             $('h1#collisionMessages').text('Ouch! Health: ' + player.health + '/100');
         } else {
             $('h1#collisionMessages').text('Game Over');
             $('h1#successMessages').remove();
-            bogusCode // Stops game - not sure how to do this properly!
+            bogusCodeToEndGame // Not sure how to do this properly!
         }
         player.x = halfCanvasWidth;
         player.y = 375;
@@ -87,16 +88,15 @@ Player.prototype.update = function() {
 // See Object.prototype for Player render() method
 
 Player.prototype.handleInput = function(keys) {
-    console.log(this.x + ', ' + this.y);
     switch(keys) {
         case 'left' :
             if (this.x > 0 ) { // Keeps player from going off left-hand side of canvas
-                this.x = this.x - oneBlock;
+                this.x = this.x - blockWidth;
             }
             break;
         case 'right' :
-            if (this.x < halfCanvasWidth + ( oneBlock * 2 )) { // Keeps player from going off right-hand side of canvas
-                this.x = this.x + oneBlock;
+            if ( this.x < blockWidth * 4 ) { // Keeps player from going off right-hand side of canvas
+                this.x = this.x + blockWidth;
             }
             break;
         case 'up' :
@@ -116,9 +116,9 @@ Player.prototype.handleInput = function(keys) {
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 allEnemies.push(
-    new Enemy( generateRandomNumber(0, canvasWidth), 60 ),
-    new Enemy( generateRandomNumber(0, canvasWidth), 154 ),
-    new Enemy( generateRandomNumber(0, canvasWidth), 234 )
+    new Enemy( generateRandomNumber(0, canvasWidth), 75 ),
+    new Enemy( generateRandomNumber(0, canvasWidth), 75 * 2 ),
+    new Enemy( generateRandomNumber(0, canvasWidth), 75 * 3 )
 );
 
 // Place the player object in a variable called player
