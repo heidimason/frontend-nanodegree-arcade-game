@@ -33,7 +33,11 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x = this.x + dt * 100; // TODO: Increase speed each time player wins
+    this.speed = this.x + dt * 100; // TODO: Increase speed each time player wins
+    this.x = this.speed;
+    // if (player.score > 0 && player.score % 10 == 0) {
+    //     this.x = this.x + dt * 300;
+    // }
 
     if (this.x > canvasWidth) {
         this.x = 0; // Loops enemies
@@ -69,6 +73,7 @@ var Player = function(xCoordinate, yCoordinate) {
     this.y = yCoordinate;
     this.health = 100;
     this.score = 0;
+    this.level = 1;
     this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!'];
     this.randomSuccessMessage = Math.floor( Math.random() * 3 );
 };
@@ -78,8 +83,13 @@ Player.prototype.update = function() {
     this.y = this.y;
 
     if (this.y === 0) { // When player reaches water,
-        this.score += 1; // increase score by 1
-        $('h1#successMessages').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/10');
+        this.score++; // increase score by 1
+        if (this.score % 10 !== 0) {
+            $('h1#successMessages').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/100');
+        } else {
+            this.level++;
+            $('h1#successMessages').text('Level: ' + this.level);
+        }
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
    }
@@ -94,13 +104,13 @@ Player.prototype.handleInput = function(keys) {
                 this.x = this.x - blockWidth;
             }
             break;
+        case 'up' :
+            this.y = this.y - 75;
+            break;
         case 'right' :
             if ( this.x < blockWidth * 4 ) { // Keeps player from going off right-hand side of canvas
                 this.x = this.x + blockWidth;
             }
-            break;
-        case 'up' :
-            this.y = this.y - 75;
             break;
         case 'down' :
             if (this.y < 375) { // Keeps player from going below canvas
