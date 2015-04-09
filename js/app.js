@@ -33,11 +33,34 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.speed = this.x + dt * 100; // TODO: Increase speed each time player wins
+    this.speed = this.x + dt * 100;
     this.x = this.speed;
-    // if (player.score > 0 && player.score % 10 == 0) {
-    //     this.x = this.x + dt * 300;
+    // TODO: Find out if it's possible to loop this without speed increasing exponentially!
+    // i.e. if (player.score > 0 && player.score % 10 == 0) {
+
     // }
+    if (player.score >= 10 && player.score < 20) {
+        this.x = this.x + dt * 150;
+    } else if (player.score >= 20 && player.score < 30) {
+        this.x = this.x + dt * 200;
+    } else if (player.score >= 30 && player.score < 40) {
+        this.x = this.x + dt * 250;
+    } else if (player.score >= 40 && player.score < 50) {
+        this.x = this.x + dt * 300;
+    } else if (player.score >= 50 && player.score < 60) {
+        this.x = this.x + dt * 350;
+    } else if (player.score >= 60 && player.score < 70) {
+        this.x = this.x + dt * 400;
+    } else if (player.score >= 70 && player.score < 80) {
+        this.x = this.x + dt * 450;
+    } else if (player.score >= 80 && player.score < 90) {
+        this.x = this.x + dt * 500;
+    } else if (player.score >= 90 && player.score < 100) {
+        this.x = this.x + dt * 550;
+    } else if (player.score >= 100) {
+        $('h1#successMessages').text('Player Triumphs!');
+        this.x = this.x + dt * 0;
+    }
 
     if (this.x > canvasWidth) {
         this.x = 0; // Loops enemies
@@ -67,10 +90,10 @@ Object.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var Player = function(xCoordinate, yCoordinate) {
+var Player = function() {
     this.sprite = 'images/char-princess-girl.png';
-    this.x = xCoordinate;
-    this.y = yCoordinate;
+    this.x = halfCanvasWidth;
+    this.y = 375;
     this.health = 100;
     this.score = 0;
     this.level = 1;
@@ -132,7 +155,7 @@ allEnemies.push(
 );
 
 // Place the player object in a variable called player
-var player = new Player(halfCanvasWidth, 375);
+var player = new Player();
 
 
 // This listens for key presses and sends the keys to your
