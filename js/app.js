@@ -61,7 +61,7 @@ Enemy.prototype.update = function(dt) {
     } else if (player.score >= 90 && player.score < 100) {
         this.x = this.x + dt * 550;
     } else if (player.score >= 100) {
-        $('h1#successMessages').text('Player Triumphs!');
+        $('h1').text('Player Triumphs!').removeClass('collision-message').removeClass('success-message').addClass('win-message');
         this.x = this.x + dt * 0;
     }
 
@@ -74,10 +74,9 @@ Enemy.prototype.update = function(dt) {
     if ( this.y === player.y && checkCollision(player.x, this.x) ) { // Moves player back to starting point in the case of enemy collision
         player.health -= 10;
         if (player.health > 0) {
-            $('h1#collisionMessages').text('Ouch! Health: ' + player.health + '/100');
+            $('h1').text('Ouch! Health: ' + player.health + '/100').removeClass('success-message').addClass('collision-message');
         } else {
-            $('h1#collisionMessages').text('Game Over');
-            $('h1#successMessages').remove();
+            $('h1').text('Game Over').removeClass('success-message').addClass('collision-message');
             bogusCodeToEndGame // Not sure how to do this properly!
         }
         player.x = halfCanvasWidth;
@@ -111,10 +110,10 @@ Player.prototype.update = function() {
     if (this.y === 0) { // When player reaches water,
         this.score++; // increase score by 1
         if (this.score % 10 !== 0) {
-            $('h1#successMessages').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/100');
+            $('h1').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/100').removeClass('collision-message').addClass('success-message');
         } else {
             this.level++;
-            $('h1#successMessages').text('Level: ' + this.level);
+            $('h1').text('Level: ' + this.level).removeClass('collision-message').addClass('success-message');
         }
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
