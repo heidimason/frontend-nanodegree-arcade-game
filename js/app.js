@@ -9,6 +9,10 @@ function generateRandomNumber(bottomNumber, topNumber) {
     return Math.random() * (topNumber - bottomNumber) + bottomNumber;
 }
 
+function generateRandomYCoordinate() {
+    return Math.round( generateRandomNumber(1, 3) ) * 75; // Possibilities = 75, 150, and 225 (75 chosen over 83 (blockHeight) because it keeps enemies on stone blocks)
+}
+
 function checkCollision(p1, p2) {
     if (p2 > p1 - halfSprite && p2 < p1 + halfSprite) {
         return true;
@@ -33,8 +37,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.speed = this.x + dt * 100;
-    this.x = this.speed;
+    this.x = this.x + dt * 100;
     // TODO: Find out if it's possible to loop this without speed increasing exponentially!
     // i.e. if (player.score > 0 && player.score % 10 == 0) {
 
@@ -64,7 +67,7 @@ Enemy.prototype.update = function(dt) {
 
     if (this.x > canvasWidth) {
         this.x = 0; // Loops enemies
-        this.y = Math.round( generateRandomNumber(1, 3) ) * 75; // Possibilities = 75, 150, or 225 (75 chosen over 83 (blockHeight) because it keeps enemies on stone blocks)
+        this.y = generateRandomYCoordinate();
         // console.log(this.y);
     }
 
@@ -149,9 +152,9 @@ Player.prototype.handleInput = function(keys) {
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 allEnemies.push(
-    new Enemy( generateRandomNumber(0, canvasWidth), 75 ),
-    new Enemy( generateRandomNumber(0, canvasWidth), 75 * 2 ),
-    new Enemy( generateRandomNumber(0, canvasWidth), 75 * 3 )
+    new Enemy( generateRandomNumber(0, canvasWidth), generateRandomYCoordinate() ),
+    new Enemy( generateRandomNumber(0, canvasWidth), generateRandomYCoordinate() ),
+    new Enemy( generateRandomNumber(0, canvasWidth), generateRandomYCoordinate() )
 );
 
 // Place the player object in a variable called player
