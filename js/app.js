@@ -116,6 +116,8 @@ Player.prototype.update = function() {
             $('h1').text('Level: ' + this.level).removeClass('collision-message').addClass('success-message');
             heart.x = generateRandomXCoordinate();
             heart.y = generateRandomYCoordinate();
+            key.x = generateRandomXCoordinate();
+            key.y = generateRandomYCoordinate();
         }
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
@@ -155,13 +157,31 @@ var Heart = function() {
 };
 
 Heart.prototype.update = function() {
-    if (this.y === player.y && this.x === player.x ) {
+    if (this.x === player.x && this.y === player.y) {
         player.health += 100;
         this.x = -101; // Makes heart disappear
         this.y = -101; // Makes heart disappear
         $('h1').text('Refreshing! Health: ' + player.health + '/100').removeClass('collision-message').addClass('success-message');
     }
-}
+};
+
+var Key = function() {
+    this.sprite = 'images/Key.png';
+    this.x = generateRandomXCoordinate();
+    this.y = generateRandomYCoordinate();
+};
+
+Key.prototype.update = function() {
+    if (this.x === player.x && this.y === player.y) {
+        player.score += 10;
+        player.level++;
+        this.x = -101; // Makes key disappear
+        this.y = -101; // Makes key disappear
+        $('h1').text('Next level! Level: ' + player.level).removeClass('collision-message').addClass('success-message');
+        player.x = halfCanvasWidth; // Returns player to starting X-coordinate
+        player.y = 375; // Returns player to starting Y-coordinate
+    }
+};
 
 
 // Now instantiate your objects.
@@ -178,6 +198,8 @@ allEnemies.push(
 var player = new Player();
 
 var heart = new Heart();
+
+var key = new Key();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
