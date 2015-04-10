@@ -103,7 +103,7 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
-// Draw the enemy (and player) on the screen, required method for game
+// Draw objects on the screen, required method for game
 Object.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -127,8 +127,6 @@ Player.prototype.update = function() {
         increaseScore()
     }
 };
-
-// See Object.prototype for Player render() method
 
 Player.prototype.handleInput = function(keys) {
     switch(keys) {
@@ -164,8 +162,8 @@ Heart.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Makes heart disappear
         this.y = -101; // Makes heart disappear
-        player.health += 100;
-        $('h1').text('Refreshing! Health: ' + player.health + '/100').removeClass('collision-message').addClass('success-message');
+        player.health += 50;
+        $('h1').text('Refreshing! Health: ' + player.health).removeClass('collision-message').addClass('success-message');
     }
 };
 
@@ -175,11 +173,11 @@ var Key = function() {
     this.y = generateYCoordinate();
 };
 
-Key.prototype.update = function() {
+Key.prototype.update = function() { // Takes player to next level
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Makes key disappear
         this.y = -101; // Makes key disappear
-        player.score += 9; // Takes player to next level
+        player.score += 9;
         increaseScore()
     }
 };
