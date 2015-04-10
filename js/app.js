@@ -9,8 +9,12 @@ function generateRandomNumber(bottomNumber, topNumber) {
     return Math.random() * (topNumber - bottomNumber) + bottomNumber;
 }
 
+function generateRandomXCoordinate() {
+    return Math.round( generateRandomNumber(0, 50) ) * 101; // Objects bearing this function are aligned with player's x-axis movement and are generated on-canvas 1/10 times
+}
+
 function generateRandomYCoordinate() {
-    return Math.round( generateRandomNumber(1, 3) ) * 75; // Possibilities = 75, 150, and 225 (75 chosen over 83 (blockHeight) because it keeps enemies on stone blocks)
+    return Math.round( generateRandomNumber(1, 3) ) * 75; // // Objects bearing this function are aligned with player's y-axis movement.  Possibilities = 75, 150, and 225; 75 was chosen over 83 (block height) because it keeps enemies on stone blocks and relatively evenly spaced.
 }
 
 function checkCollision(p1, p2) {
@@ -26,7 +30,6 @@ var Enemy = function(xCoordinate, yCoordinate) {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-
     this.x = xCoordinate;
     this.y = yCoordinate;
 };
@@ -61,8 +64,8 @@ Enemy.prototype.update = function(dt) {
     } else if (player.score >= 90 && player.score < 100) {
         this.x = this.x + dt * 550;
     } else if (player.score >= 100) {
-        $('h1').text('Player Triumphs!').removeClass('collision-message').removeClass('success-message').addClass('win-message');
-        this.x = this.x + dt * 0;
+        $('h1').text('Player Triumphs!').removeClass('collision-message, success-message').addClass('win-message');
+        bogusCodeToEndGame // Not sure how to do this properly!
     }
 
     if (this.x > canvasWidth) {
@@ -74,7 +77,7 @@ Enemy.prototype.update = function(dt) {
     if ( this.y === player.y && checkCollision(player.x, this.x) ) { // Moves player back to starting point in the case of enemy collision
         player.health -= 10;
         if (player.health > 0) {
-            $('h1').text('Ouch! Health: ' + player.health + '/100').removeClass('success-message').addClass('collision-message');
+            $('h1').text('Ouch! Health: ' + player.health).removeClass('success-message').addClass('collision-message');
         } else {
             $('h1').text('Game Over').removeClass('success-message').addClass('collision-message');
             bogusCodeToEndGame // Not sure how to do this properly!
@@ -104,9 +107,6 @@ var Player = function() {
 };
 
 Player.prototype.update = function() {
-    this.x = this.x;
-    this.y = this.y;
-
     if (this.y === 0) { // When player reaches water,
         this.score++; // increase score by 1
         if (this.score % 10 !== 0) {
@@ -114,6 +114,8 @@ Player.prototype.update = function() {
         } else {
             this.level++;
             $('h1').text('Level: ' + this.level).removeClass('collision-message').addClass('success-message');
+            heart.x = generateRandomXCoordinate();
+            heart.y = generateRandomYCoordinate();
         }
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
@@ -133,7 +135,7 @@ Player.prototype.handleInput = function(keys) {
             this.y = this.y - 75;
             break;
         case 'right' :
-            if ( this.x < blockWidth * 4 ) { // Keeps player from going off right-hand side of canvas
+            if ( this.x < 404 ) { // Keeps player from going off right-hand side of canvas
                 this.x = this.x + blockWidth;
             }
             break;
@@ -143,7 +145,23 @@ Player.prototype.handleInput = function(keys) {
             }
             break;
     }
+    // console.log(this.x + ', ' + this.y);
 };
+
+var Heart = function() {
+    this.sprite = 'images/Heart.png';
+    this.x = generateRandomXCoordinate();
+    this.y = generateRandomYCoordinate();
+};
+
+Heart.prototype.update = function() {
+    if (this.y === player.y && this.x === player.x ) {
+        player.health += 100;
+        this.x = -101; // Makes heart disappear
+        this.y = -101; // Makes heart disappear
+        $('h1').text('Refreshing! Health: ' + player.health + '/100').removeClass('collision-message').addClass('success-message');
+    }
+}
 
 
 // Now instantiate your objects.
@@ -159,6 +177,7 @@ allEnemies.push(
 // Place the player object in a variable called player
 var player = new Player();
 
+var heart = new Heart();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
