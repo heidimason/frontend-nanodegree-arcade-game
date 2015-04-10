@@ -23,6 +23,22 @@ function checkCollision(x1, x2) {
     }
 }
 
+function increaseScore() {
+    player.score++;
+    if (player.score % 10 !== 0) {
+        $('h1').text(player.successMessages[player.randomSuccessMessage] + ' Score: ' + player.score + '/100').removeClass('collision-message').addClass('success-message');
+    } else {
+        player.level++;
+        $('h1').text('Level: ' + player.level).removeClass('collision-message').addClass('success-message');
+        heart.x = generateXCoordinate();
+        heart.y = generateYCoordinate();
+        key.x = generateXCoordinate();
+        key.y = generateYCoordinate();
+    }
+    player.x = halfCanvasWidth; // Returns player to starting X-coordinate
+    player.y = 375; // Returns player to starting Y-coordinate
+}
+
 // Enemies our player must avoid
 var Enemy = function(xCoordinate, yCoordinate) {
     // Variables applied to each of our instances go here
@@ -74,7 +90,7 @@ Enemy.prototype.update = function(dt) {
         // console.log(this.y);
     }
 
-    if ( this.y === player.y && checkCollision(player.x, this.x) ) { // Moves player back to starting point in the case of enemy collision
+    if ( checkCollision(player.x, this.x) && this.y === player.y ) { // Moves player back to starting point in the case of enemy collision
         player.health -= 10;
         if (player.health > 0) {
             $('h1').text('Ouch! Health: ' + player.health).removeClass('success-message').addClass('collision-message');
@@ -101,27 +117,15 @@ var Player = function() {
     this.y = 375;
     this.health = 100;
     this.score = 0;
-    this.level = 1;
     this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!'];
     this.randomSuccessMessage = Math.floor( Math.random() * 3 );
+    this.level = 1;
 };
 
 Player.prototype.update = function() {
-    if (this.y === 0) { // When player reaches water,
-        this.score++; // increase score by 1
-        if (this.score % 10 !== 0) {
-            $('h1').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/100').removeClass('collision-message').addClass('success-message');
-        } else {
-            this.level++;
-            $('h1').text('Level: ' + this.level).removeClass('collision-message').addClass('success-message');
-            heart.x = generateXCoordinate();
-            heart.y = generateYCoordinate();
-            key.x = generateXCoordinate();
-            key.y = generateYCoordinate();
-        }
-        this.x = halfCanvasWidth; // Returns player to starting X-coordinate
-        this.y = 375; // Returns player to starting Y-coordinate
-   }
+    if (this.y === 0) { // If player reaches water
+        increaseScore()
+    }
 };
 
 // See Object.prototype for Player render() method
@@ -158,9 +162,9 @@ var Heart = function() {
 
 Heart.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
-        player.health += 100;
         this.x = -101; // Makes heart disappear
         this.y = -101; // Makes heart disappear
+        player.health += 100;
         $('h1').text('Refreshing! Health: ' + player.health + '/100').removeClass('collision-message').addClass('success-message');
     }
 };
@@ -173,13 +177,10 @@ var Key = function() {
 
 Key.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
-        player.score += 10;
-        player.level++;
         this.x = -101; // Makes key disappear
         this.y = -101; // Makes key disappear
-        $('h1').text('Next level! Level: ' + player.level).removeClass('collision-message').addClass('success-message');
-        player.x = halfCanvasWidth; // Returns player to starting X-coordinate
-        player.y = 375; // Returns player to starting Y-coordinate
+        player.score += 9; // Takes player to next level
+        increaseScore()
     }
 };
 
