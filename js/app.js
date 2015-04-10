@@ -9,16 +9,16 @@ function generateRandomNumber(bottomNumber, topNumber) {
     return Math.random() * (topNumber - bottomNumber) + bottomNumber;
 }
 
-function generateRandomXCoordinate() {
+function generateXCoordinate() {
     return Math.round( generateRandomNumber(0, 50) ) * 101; // Objects bearing this function are aligned with player's x-axis movement and are generated on-canvas 1/10 times
 }
 
-function generateRandomYCoordinate() {
+function generateYCoordinate() {
     return Math.round( generateRandomNumber(1, 3) ) * 75; // // Objects bearing this function are aligned with player's y-axis movement.  Possibilities = 75, 150, and 225; 75 was chosen over 83 (block height) because it keeps enemies on stone blocks and relatively evenly spaced.
 }
 
-function checkCollision(p1, p2) {
-    if (p2 > p1 - halfSprite && p2 < p1 + halfSprite) {
+function checkCollision(x1, x2) {
+    if (x2 > x1 - halfSprite && x2 < x1 + halfSprite) {
         return true;
     }
 }
@@ -70,7 +70,7 @@ Enemy.prototype.update = function(dt) {
 
     if (this.x > canvasWidth) {
         this.x = 0; // Loops enemies
-        this.y = generateRandomYCoordinate();
+        this.y = generateYCoordinate();
         // console.log(this.y);
     }
 
@@ -114,10 +114,10 @@ Player.prototype.update = function() {
         } else {
             this.level++;
             $('h1').text('Level: ' + this.level).removeClass('collision-message').addClass('success-message');
-            heart.x = generateRandomXCoordinate();
-            heart.y = generateRandomYCoordinate();
-            key.x = generateRandomXCoordinate();
-            key.y = generateRandomYCoordinate();
+            heart.x = generateXCoordinate();
+            heart.y = generateYCoordinate();
+            key.x = generateXCoordinate();
+            key.y = generateYCoordinate();
         }
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
@@ -152,8 +152,8 @@ Player.prototype.handleInput = function(keys) {
 
 var Heart = function() {
     this.sprite = 'images/Heart.png';
-    this.x = generateRandomXCoordinate();
-    this.y = generateRandomYCoordinate();
+    this.x = generateXCoordinate();
+    this.y = generateYCoordinate();
 };
 
 Heart.prototype.update = function() {
@@ -167,8 +167,8 @@ Heart.prototype.update = function() {
 
 var Key = function() {
     this.sprite = 'images/Key.png';
-    this.x = generateRandomXCoordinate();
-    this.y = generateRandomYCoordinate();
+    this.x = generateXCoordinate();
+    this.y = generateYCoordinate();
 };
 
 Key.prototype.update = function() {
@@ -189,9 +189,9 @@ Key.prototype.update = function() {
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 allEnemies.push(
-    new Enemy( generateRandomNumber(0, canvasWidth), generateRandomYCoordinate() ),
-    new Enemy( generateRandomNumber(0, canvasWidth), generateRandomYCoordinate() ),
-    new Enemy( generateRandomNumber(0, canvasWidth), generateRandomYCoordinate() )
+    new Enemy( generateRandomNumber(0, canvasWidth), generateYCoordinate() ),
+    new Enemy( generateRandomNumber(0, canvasWidth), generateYCoordinate() ),
+    new Enemy( generateRandomNumber(0, canvasWidth), generateYCoordinate() )
 );
 
 // Place the player object in a variable called player
