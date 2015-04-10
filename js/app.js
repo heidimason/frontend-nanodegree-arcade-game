@@ -129,13 +129,13 @@ var Player = function() {
     this.y = 375;
     this.health = 100;
     this.score = 0;
-    this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!'];
+    this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!', 'Bam!'];
     this.level = 1;
 };
 
 Player.prototype.update = function() {
     if (this.y === 0) { // If player reaches water
-        this.randomSuccessMessage = Math.floor( Math.random() * 3 );
+        this.randomSuccessMessage = Math.floor( Math.random() * 4 );
         increaseScore();
         resetPlayerCoordinates();
     }
