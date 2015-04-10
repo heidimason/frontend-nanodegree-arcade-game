@@ -97,6 +97,9 @@ var Engine = (function(global) {
         player.update();
         heart.update();
         key.update();
+        gemOrange.update();
+        gemGreen.update();
+        gemBlue.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -156,6 +159,9 @@ var Engine = (function(global) {
         player.render();
         heart.render();
         key.render();
+        gemOrange.render();
+        gemGreen.render();
+        gemBlue.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -177,7 +183,10 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/char-princess-girl.png',
         'images/Heart.png',
-        'images/Key.png'
+        'images/Key.png',
+        'images/Gem Orange.png',
+        'images/Gem Green.png',
+        'images/Gem Blue.png'
     ]);
     Resources.onReady(init);
 

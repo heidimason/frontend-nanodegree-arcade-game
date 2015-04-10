@@ -23,6 +23,11 @@ function checkCollision(x1, x2) {
     }
 }
 
+function resetPlayerCoordinates() {
+    player.x = halfCanvasWidth; // Returns player to starting X-coordinate
+    player.y = 375; // Returns player to starting Y-coordinate
+}
+
 function increaseScore() {
     player.score++;
     if (player.score % 10 !== 0) {
@@ -35,9 +40,22 @@ function increaseScore() {
         key.x = generateXCoordinate();
         key.y = generateYCoordinate();
     }
-    player.x = halfCanvasWidth; // Returns player to starting X-coordinate
-    player.y = 375; // Returns player to starting Y-coordinate
 }
+
+function increaseLevel() {
+    player.score += 10;
+    player.level++;
+    $('h1').text('Level: ' + player.level).removeClass('collision-message').addClass('success-message');
+    heart.x = generateXCoordinate();
+    heart.y = generateYCoordinate();
+    key.x = generateXCoordinate();
+    key.y = generateYCoordinate();
+}
+
+// Draw objects on the screen, required method for game
+Object.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
 
 // Enemies our player must avoid
 var Enemy = function(xCoordinate, yCoordinate) {
@@ -98,14 +116,8 @@ Enemy.prototype.update = function(dt) {
             $('h1').text('Game Over').removeClass('success-message').addClass('collision-message');
             bogusCodeToEndGame // Not sure how to do this properly!
         }
-        player.x = halfCanvasWidth;
-        player.y = 375;
+        resetPlayerCoordinates();
     }
-};
-
-// Draw objects on the screen, required method for game
-Object.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 // Now write your own player class
@@ -124,7 +136,8 @@ var Player = function() {
 
 Player.prototype.update = function() {
     if (this.y === 0) { // If player reaches water
-        increaseScore()
+        increaseScore();
+        resetPlayerCoordinates();
     }
 };
 
@@ -177,11 +190,58 @@ Key.prototype.update = function() { // Takes player to next level
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Makes key disappear
         this.y = -101; // Makes key disappear
-        player.score += 9;
-        increaseScore()
+        increaseLevel()
+        resetPlayerCoordinates();
     }
 };
 
+var GemOrange = function() {
+    this.sprite = 'images/Gem Orange.png';
+    this.x = generateXCoordinate();
+    this.y = generateYCoordinate();
+};
+
+GemOrange.prototype.update = function() {
+    if (this.x === player.x && this.y === player.y) {
+        this.x = -101; // Makes gem disappear
+        this.y = -101; // Makes gem disappear
+        player.score += 2;
+        increaseScore();
+        $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
+    }
+};
+
+var GemGreen = function() {
+    this.sprite = 'images/Gem Green.png';
+    this.x = generateXCoordinate();
+    this.y = generateYCoordinate();
+};
+
+GemGreen.prototype.update = function() {
+    if (this.x === player.x && this.y === player.y) {
+        this.x = -101; // Makes gem disappear
+        this.y = -101; // Makes gem disappear
+        player.score += 3;
+        increaseScore();
+        $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
+    }
+};
+
+var GemBlue = function() {
+    this.sprite = 'images/Gem Blue.png';
+    this.x = generateXCoordinate();
+    this.y = generateYCoordinate();
+};
+
+GemBlue.prototype.update = function() {
+    if (this.x === player.x && this.y === player.y) {
+        this.x = -101; // Makes gem disappear
+        this.y = -101; // Makes gem disappear
+        player.score += 4;
+        increaseScore();
+        $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
+    }
+};
 
 // Now instantiate your objects.
 
@@ -197,8 +257,11 @@ allEnemies.push(
 var player = new Player();
 
 var heart = new Heart();
-
 var key = new Key();
+
+var gemOrange = new GemOrange();
+var gemGreen = new GemGreen();
+var gemBlue = new GemBlue();
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
