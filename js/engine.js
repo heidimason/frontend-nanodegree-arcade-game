@@ -96,11 +96,11 @@ var Engine = (function(global) {
         });
         player.update();
         heart.update();
-        key.update();
         star.update();
         gemOrange.update();
         gemGreen.update();
         gemBlue.update();
+        key.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -159,11 +159,11 @@ var Engine = (function(global) {
         });
         player.render();
         heart.render();
-        key.render();
         star.render();
         gemOrange.render();
         gemGreen.render();
         gemBlue.render();
+        key.render();
     }
 
     /* This function does nothing but it could have been a good place to

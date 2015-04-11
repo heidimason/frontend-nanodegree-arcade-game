@@ -10,7 +10,7 @@ function generateRandomNumber(bottomNumber, topNumber) {
 }
 
 function generateXCoordinateOffCanvas() {
-    return Math.round( generateRandomNumber(0, 50) ) * 101; // Objects bearing this function are aligned with player's x-axis movement and are generated on-canvas 1/10 times
+    return Math.round( generateRandomNumber(0, 25) ) * 101; // Objects bearing this function are aligned with player's x-axis movement and are generated on-canvas 1 in 5 times
 }
 
 function generateXCoordinateOnCanvas() {
