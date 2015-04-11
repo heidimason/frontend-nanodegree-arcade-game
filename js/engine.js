@@ -97,6 +97,7 @@ var Engine = (function(global) {
         player.update();
         heart.update();
         key.update();
+        star.update();
         gemOrange.update();
         gemGreen.update();
         gemBlue.update();
@@ -159,6 +160,7 @@ var Engine = (function(global) {
         player.render();
         heart.render();
         key.render();
+        star.render();
         gemOrange.render();
         gemGreen.render();
         gemBlue.render();
@@ -183,10 +185,11 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/char-princess-girl.png',
         'images/Heart.png',
-        'images/Key.png',
+        'images/Star.png',
         'images/Gem Orange.png',
         'images/Gem Green.png',
-        'images/Gem Blue.png'
+        'images/Gem Blue.png',
+        'images/Key.png'
     ]);
     Resources.onReady(init);
 
