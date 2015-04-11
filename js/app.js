@@ -140,9 +140,9 @@ Enemy.prototype.update = function(dt) {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/char-princess-girl.png';
+    this.sprite = 'images/grass-block.png';
     this.x = halfCanvasWidth;
-    this.y = 375;
+    // this.y = 375; // See avatar.js for this value
     this.health = 100;
     this.score = 0;
     this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!', 'Bam!'];
