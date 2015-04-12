@@ -2,7 +2,7 @@ Classic Arcade Game
 ===============================
 
 ####To Start:
-* Download files and open index.html in your up-to-date, JavaScript-enabled browser
+* Download files and open index.html in an up-to-date, JavaScript-enabled browser
 * Click on desired avatar
 
 ####Goal:
@@ -23,16 +23,16 @@ These randomly appear and consist of the following:
 ####Levels:
 There are 10 levels based upon the following number of points:
 
-1. **Level 1**: 0 - 9 points
-2. **Level 2**: 10 - 19 points
-3. **Level 3**: 20 - 29 points
-4. **Level 4**: 30 - 39 points
-5. **Level 5**: 40 - 49 points
-6. **Level 6**: 50 - 59 points
-7. **Level 7**: 60 - 69 points
-8. **Level 8**: 70 - 79 points
-9. **Level 9**: 80 - 89 points
-10. **Level 10**: 90 - 99 points
+* **Level 1**: 0 - 9 points
+* **Level 2**: 10 - 19 points
+* **Level 3**: 20 - 29 points
+* **Level 4**: 30 - 39 points
+* **Level 5**: 40 - 49 points
+* **Level 6**: 50 - 59 points
+* **Level 7**: 60 - 69 points
+* **Level 8**: 70 - 79 points
+* **Level 9**: 80 - 89 points
+* **Level 10**: 90 - 99 points
 
 ####To Win:
 Reach a score of 100 without running out of health points
