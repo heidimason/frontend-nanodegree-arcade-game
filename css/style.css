@@ -21,3 +21,8 @@ h1 {
 .win-message {
 	color: blue;
 }
+
+#boy:hover, #girl:hover {
+	cursor: pointer;
+	border: 1px solid white;
+}
