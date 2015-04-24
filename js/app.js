@@ -21,17 +21,6 @@ function generateYCoordinate() {
     return Math.round( generateRandomNumber(1, 3) ) * 75; // // Objects bearing this function are aligned with player's y-axis movement.  Possibilities = 75, 150, and 225; 75 was chosen over 83 (block height) because it keeps enemies on stone blocks and relatively evenly spaced.
 }
 
-function checkCollision(x1, x2) {
-    if (x2 > x1 - halfSprite && x2 < x1 + halfSprite) {
-        return true;
-    }
-}
-
-function resetPlayerCoordinates() {
-    player.x = halfCanvasWidth; // Returns player to starting X-coordinate
-    player.y = 375; // Returns player to starting Y-coordinate
-}
-
 function increaseLevel() {
     player.level++;
     $('h1').text('Level: ' + player.level).removeClass('collision-message').addClass('success-message');
@@ -41,16 +30,7 @@ function increaseLevel() {
     star.y = generateYCoordinate();
     key.x = generateXCoordinateOffCanvas();
     key.y = generateYCoordinate();
-    resetPlayerCoordinates();
-}
-
-function increaseScore() {
-    player.score++;
-    if (player.score % 10 !== 0) {
-        $('h1').text(player.successMessages[player.randomSuccessMessage] + ' Score: ' + player.score + '/100').removeClass('collision-message').addClass('success-message');
-    } else {
-        increaseLevel();
-    }
+    player.resetPlayerCoordinates();
 }
 
 function hideObjects() { // Hides objects so that they are not left on canvas after player reaches water and begins a new cycle
@@ -95,6 +75,8 @@ Enemy.prototype.update = function(dt) {
     // i.e. if (player.score > 0 && player.score % 10 == 0) {
 
     // }
+
+    // Increments enemy speed with level increase
     if (player.score >= 10 && player.score < 20) {
         this.x = this.x + dt * 150;
     } else if (player.score >= 20 && player.score < 30) {
@@ -113,9 +95,9 @@ Enemy.prototype.update = function(dt) {
         this.x = this.x + dt * 500;
     } else if (player.score >= 90 && player.score < 100) {
         this.x = this.x + dt * 550;
-    } else if (player.score >= 100) {
-        $('h1').text('Player Triumphs!').removeClass('collision-message, success-message').addClass('win-message');
-        bogusCodeToEndGame // Not sure how to do this properly!
+    } else if (player.score >= 100 || player.health === 0) { // i.e. If player wins or game is over
+        this.x = -101; // Hides enemies
+        hideObjects();
     }
 
     if (this.x > canvasWidth) {
@@ -124,16 +106,6 @@ Enemy.prototype.update = function(dt) {
         // console.log(this.y);
     }
 
-    if ( checkCollision(player.x, this.x) && this.y === player.y ) {
-        player.health -= 10;
-        if (player.health > 0) {
-            $('h1').text('Ouch! Health: ' + player.health).removeClass('success-message').addClass('collision-message');
-        } else {
-            $('h1').text('Game Over').removeClass('success-message').addClass('collision-message');
-            bogusCodeToEndGame // Not sure how to do this properly!
-        }
-        resetPlayerCoordinates();
-    }
 };
 
 // Now write your own player class
@@ -142,18 +114,61 @@ Enemy.prototype.update = function(dt) {
 var Player = function() {
     this.sprite = 'images/grass-block.png';
     this.x = halfCanvasWidth;
-    // this.y = 375; // See avatar.js for this value
+    // this.y = 375; // See js/avatar.js for this value
     this.health = 100;
-    this.score = 0;
     this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!', 'Bam!'];
+    this.score = 0;
     this.level = 1;
+
+    this.checkCollision = function(x1, x2) {
+        if (x2 > x1 - halfSprite && x2 < x1 + halfSprite) {
+            return true;
+        }
+    }
+
+    this.resetPlayerCoordinates = function() {
+        this.x = halfCanvasWidth; // Returns player to starting X-coordinate
+        this.y = 375; // Returns player to starting Y-coordinate
+    }
+
+    this.increaseScore = function() {
+        this.score++;
+        if (this.score % 10 !== 0) {
+            $('h1').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/100').removeClass('collision-message').addClass('success-message');
+        } else {
+            increaseLevel();
+        }
+    }
 };
 
 Player.prototype.update = function() {
+    if ( this.checkCollision(this.x, allEnemies[0].x) && allEnemies[0].y === this.y || this.checkCollision(this.x, allEnemies[1].x) && allEnemies[1].y === this.y || this.checkCollision(this.x, allEnemies[2].x) && allEnemies[2].y === this.y) {
+        this.health -= 10;
+        if (this.health > 0) {
+            $('h1').text('Ouch! Health: ' + this.health).removeClass('success-message').addClass('collision-message');
+        } else {
+            $('h1').text('Game Over').removeClass('success-message').addClass('collision-message');
+        }
+        this.resetPlayerCoordinates();
+    }
+
+    if (this.x === heart.x && this.y === heart.y) {
+        this.health += 50;
+        $('h1').text('Refreshing! Health: ' + player.health).removeClass('collision-message').addClass('success-message');
+    }
+
+    if (this.x === star.x && this.y === star.y) {
+        this.score += 10;
+    }
+
+    if (this.x === Gem.x && this.y === Gem.y) {
+        this.increaseScore();
+    }
+
     if (this.y === 0) { // If player reaches water
         this.randomSuccessMessage = Math.floor( Math.random() * 4 );
-        increaseScore();
-        resetPlayerCoordinates();
+        this.increaseScore();
+        this.resetPlayerCoordinates();
         hideObjects();
         gemOrange.x = generateXCoordinateOffCanvas();
         gemOrange.y = generateYCoordinate();
@@ -161,6 +176,10 @@ Player.prototype.update = function() {
         gemGreen.y = generateYCoordinate();
         gemBlue.x = generateXCoordinateOffCanvas();
         gemBlue.y = generateYCoordinate();
+    }
+
+    if (this.score === 100) {
+        $('h1').text('Player Triumphs!').removeClass('collision-message, success-message').addClass('win-message');
     }
 };
 
@@ -188,6 +207,7 @@ Player.prototype.handleInput = function(keys) {
     // console.log(this.x + ', ' + this.y);
 };
 
+
 var Heart = function() {
     this.sprite = 'images/Heart.png';
     this.x = generateXCoordinateOffCanvas();
@@ -198,10 +218,9 @@ Heart.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Hides heart
         this.y = -101; // Hides heart
-        player.health += 50;
-        $('h1').text('Refreshing! Health: ' + player.health).removeClass('collision-message').addClass('success-message');
     }
 };
+
 
 var Star = function() {
     this.sprite = 'images/Star.png';
@@ -214,55 +233,24 @@ Star.prototype.update = function() { // Takes player to next level
         this.x = -101; // Hides star
         this.y = -101; // Hides star
         hideObjects();
-        player.score += 10;
         increaseLevel();
     }
 };
 
-var GemOrange = function() {
-    this.sprite = 'images/Gem Orange.png';
+
+var Gem = function() {
     this.x = generateXCoordinateOffCanvas();
     this.y = generateYCoordinate();
 };
 
-GemOrange.prototype.update = function() {
+Gem.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Hides gem
         this.y = -101; // Hides gem
-        increaseScore();
         $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
     }
 };
 
-var GemGreen = function() {
-    this.sprite = 'images/Gem Green.png';
-    this.x = generateXCoordinateOffCanvas();
-    this.y = generateYCoordinate();
-};
-
-GemGreen.prototype.update = function() {
-    if (this.x === player.x && this.y === player.y) {
-        this.x = -101; // Hides gem
-        this.y = -101; // Hides gem
-        increaseScore();
-        $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
-    }
-};
-
-var GemBlue = function() {
-    this.sprite = 'images/Gem Blue.png';
-    this.x = generateXCoordinateOffCanvas();
-    this.y = generateYCoordinate();
-};
-
-GemBlue.prototype.update = function() {
-    if (this.x === player.x && this.y === player.y) {
-        this.x = -101; // Hides gem
-        this.y = -101; // Hides gem
-        increaseScore();
-        $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
-    }
-};
 
 var Key = function() {
     this.sprite = 'images/Key.png';
@@ -288,6 +276,7 @@ Key.prototype.update = function() {
     }
 };
 
+
 // Now instantiate your objects.
 
 // Place all enemy objects in an array called allEnemies
@@ -304,9 +293,14 @@ var player = new Player();
 var heart = new Heart();
 var star = new Star();
 
-var gemOrange = new GemOrange();
-var gemGreen = new GemGreen();
-var gemBlue = new GemBlue();
+var gemOrange = new Gem();
+gemOrange.sprite = 'images/Gem Orange.png';
+
+var gemGreen = new Gem();
+gemGreen.sprite = 'images/Gem Green.png';
+
+var gemBlue = new Gem();
+gemBlue.sprite = 'images/Gem Blue.png';
 
 var key = new Key();
 
