@@ -3,3 +3,4 @@ https://github.com/adityagorti/arcade-game/blob/master/js/app.js
 https://teamtreehouse.com/library/javascript-basics-2/working-with-numbers/create-a-random-number
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+http://www.w3schools.com/js/js_object_methods.asp
