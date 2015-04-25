@@ -9,7 +9,7 @@ function generateRandomNumber(bottomNumber, topNumber) {
     return Math.random() * (topNumber - bottomNumber) + bottomNumber;
 }
 
-function generateXCoordinateOffCanvas() {
+function generateXCoordinateOnOrOffCanvas() {
     return Math.round( generateRandomNumber(0, 25) ) * 101; // Objects bearing this function are aligned with player's x-axis movement and are generated on-canvas 1 in 5 times
 }
 
@@ -21,19 +21,7 @@ function generateYCoordinate() {
     return Math.round( generateRandomNumber(1, 3) ) * 75; // // Objects bearing this function are aligned with player's y-axis movement.  Possibilities = 75, 150, and 225; 75 was chosen over 83 (block height) because it keeps enemies on stone blocks and relatively evenly spaced.
 }
 
-function increaseLevel() {
-    player.level++;
-    $('h1').text('Level: ' + player.level).removeClass('collision-message').addClass('success-message');
-    heart.x = generateXCoordinateOffCanvas();
-    heart.y = generateYCoordinate();
-    star.x = generateXCoordinateOffCanvas();
-    star.y = generateYCoordinate();
-    key.x = generateXCoordinateOffCanvas();
-    key.y = generateYCoordinate();
-    player.resetPlayerCoordinates();
-}
-
-function hideObjects() { // Hides objects so that they are not left on canvas after player reaches water and begins a new cycle
+function hideObjects() { // Hides objects so that they are not left on canvas
     heart.x = -101;
     heart.y = -101;
     star.x = -101;
@@ -46,6 +34,24 @@ function hideObjects() { // Hides objects so that they are not left on canvas af
     gemBlue.y = -101;
     key.x = -101;
     key.y = -101;
+}
+
+function increaseLevel() {
+    player.level++;
+    $('h1').text('Level: ' + player.level).removeClass('collision-message').addClass('success-message');
+    player.resetPlayerCoordinates();
+    heart.x = generateXCoordinateOnOrOffCanvas();
+    heart.y = generateYCoordinate();
+    star.x = generateXCoordinateOnOrOffCanvas();
+    star.y = generateYCoordinate();
+    gemOrange.x = generateXCoordinateOnOrOffCanvas();
+    gemOrange.y = generateYCoordinate();
+    gemBlue.x = generateXCoordinateOnOrOffCanvas();
+    gemBlue.y = generateYCoordinate();
+    gemGreen.x = generateXCoordinateOnOrOffCanvas();
+    gemGreen.y = generateYCoordinate();
+    key.x = generateXCoordinateOnOrOffCanvas();
+    key.y = generateYCoordinate();
 }
 
 // Draw objects on the screen, required method for game
@@ -95,9 +101,9 @@ Enemy.prototype.update = function(dt) {
         this.x = this.x + dt * 500;
     } else if (player.score >= 90 && player.score < 100) {
         this.x = this.x + dt * 550;
-    } else if (player.score >= 100 || player.health === 0) { // i.e. If player wins or game is over
-        this.x = -101; // Hides enemies
-        hideObjects();
+    } else if (player.score >= 100 || player.health === 0) { // i.e. If player wins or game is over,
+        this.x = -101; // hide enemies
+        hideObjects(); // and other objects too
     }
 
     if (this.x > canvasWidth) {
@@ -105,31 +111,30 @@ Enemy.prototype.update = function(dt) {
         this.y = generateYCoordinate();
         // console.log(this.y);
     }
-
 };
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/grass-block.png';
+    this.sprite = 'images/grass-block.png'; // Placeholder - see /js/avatar.js for possible values
     this.x = halfCanvasWidth;
-    // this.y = 375; // See js/avatar.js for this value
-    this.health = 100;
-    this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!', 'Bam!'];
+    // this.y = 375; // See /js/avatar.js for this value
     this.score = 0;
     this.level = 1;
+    this.health = 100;
+    this.successMessages = ['Booyah!', 'Woohoo!', 'Yeehaw!', 'Bam!'];
 
     this.checkCollision = function(x1, x2) {
         if (x2 > x1 - halfSprite && x2 < x1 + halfSprite) {
             return true;
         }
-    }
+    };
 
     this.resetPlayerCoordinates = function() {
         this.x = halfCanvasWidth; // Returns player to starting X-coordinate
         this.y = 375; // Returns player to starting Y-coordinate
-    }
+    };
 
     this.increaseScore = function() {
         this.score++;
@@ -138,11 +143,11 @@ var Player = function() {
         } else {
             increaseLevel();
         }
-    }
+    };
 };
 
 Player.prototype.update = function() {
-    if ( this.checkCollision(this.x, allEnemies[0].x) && allEnemies[0].y === this.y || this.checkCollision(this.x, allEnemies[1].x) && allEnemies[1].y === this.y || this.checkCollision(this.x, allEnemies[2].x) && allEnemies[2].y === this.y) {
+    if ( (this.checkCollision(this.x, allEnemies[0].x) && allEnemies[0].y === this.y) || (this.checkCollision(this.x, allEnemies[1].x) && allEnemies[1].y === this.y) || (this.checkCollision(this.x, allEnemies[2].x) && allEnemies[2].y === this.y) ) {
         this.health -= 10;
         if (this.health > 0) {
             $('h1').text('Ouch! Health: ' + this.health).removeClass('success-message').addClass('collision-message');
@@ -154,15 +159,16 @@ Player.prototype.update = function() {
 
     if (this.x === heart.x && this.y === heart.y) {
         this.health += 50;
-        $('h1').text('Refreshing! Health: ' + player.health).removeClass('collision-message').addClass('success-message');
+        $('h1').text('Refreshing! Health: ' + this.health).removeClass('collision-message').addClass('success-message');
     }
 
     if (this.x === star.x && this.y === star.y) {
         this.score += 10;
     }
 
-    if (this.x === Gem.x && this.y === Gem.y) {
+    if ( (this.x === gemOrange.x && this.y === gemOrange.y) || (this.x === gemBlue.x && this.y === gemBlue.y) || (this.x === gemGreen.x && this.y === gemGreen.y) ) {
         this.increaseScore();
+        $('h1').text('Cha-ching! Score: ' + this.score + '/100').removeClass('collision-message').addClass('success-message');
     }
 
     if (this.y === 0) { // If player reaches water
@@ -170,11 +176,11 @@ Player.prototype.update = function() {
         this.increaseScore();
         this.resetPlayerCoordinates();
         hideObjects();
-        gemOrange.x = generateXCoordinateOffCanvas();
+        gemOrange.x = generateXCoordinateOnOrOffCanvas();
         gemOrange.y = generateYCoordinate();
-        gemGreen.x = generateXCoordinateOffCanvas();
+        gemGreen.x = generateXCoordinateOnOrOffCanvas();
         gemGreen.y = generateYCoordinate();
-        gemBlue.x = generateXCoordinateOffCanvas();
+        gemBlue.x = generateXCoordinateOnOrOffCanvas();
         gemBlue.y = generateYCoordinate();
     }
 
@@ -210,7 +216,7 @@ Player.prototype.handleInput = function(keys) {
 
 var Heart = function() {
     this.sprite = 'images/Heart.png';
-    this.x = generateXCoordinateOffCanvas();
+    this.x = generateXCoordinateOnOrOffCanvas();
     this.y = generateYCoordinate();
 };
 
@@ -219,12 +225,17 @@ Heart.prototype.update = function() {
         this.x = -101; // Hides heart
         this.y = -101; // Hides heart
     }
+
+    if (key.x === player.x && key.y === player.y) {
+        this.x = generateXCoordinateOnCanvas();
+        this.y = generateYCoordinate();
+    }
 };
 
 
 var Star = function() {
     this.sprite = 'images/Star.png';
-    this.x = generateXCoordinateOffCanvas();
+    this.x = generateXCoordinateOnOrOffCanvas();
     this.y = generateYCoordinate();
 };
 
@@ -235,11 +246,16 @@ Star.prototype.update = function() { // Takes player to next level
         hideObjects();
         increaseLevel();
     }
+
+    if (key.x === player.x && key.y === player.y) {
+        this.x = generateXCoordinateOnCanvas();
+        this.y = generateYCoordinate();
+    }
 };
 
 
 var Gem = function() {
-    this.x = generateXCoordinateOffCanvas();
+    this.x = generateXCoordinateOnOrOffCanvas();
     this.y = generateYCoordinate();
 };
 
@@ -247,14 +263,18 @@ Gem.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Hides gem
         this.y = -101; // Hides gem
-        $('h1').text('Cha-ching! Score: ' + player.score).removeClass('collision-message').addClass('success-message');
+    }
+
+    if (key.x === player.x && key.y === player.y) {
+        this.x = generateXCoordinateOnCanvas();
+        this.y = generateYCoordinate();
     }
 };
 
 
 var Key = function() {
     this.sprite = 'images/Key.png';
-    this.x = generateXCoordinateOffCanvas();
+    this.x = generateXCoordinateOnOrOffCanvas();
     this.y = generateYCoordinate();
 };
 
@@ -262,16 +282,6 @@ Key.prototype.update = function() {
     if (this.x === player.x && this.y === player.y) {
         this.x = -101; // Hides key
         this.y = -101; // Hides key
-        heart.x = generateXCoordinateOnCanvas();
-        heart.y = generateYCoordinate();
-        star.x = generateXCoordinateOnCanvas();
-        star.y = generateYCoordinate();
-        gemGreen.x = generateXCoordinateOnCanvas();
-        gemGreen.y = generateYCoordinate();
-        gemBlue.x = generateXCoordinateOnCanvas();
-        gemBlue.y = generateYCoordinate();
-        gemOrange.x = generateXCoordinateOnCanvas();
-        gemOrange.y = generateYCoordinate();
         $('h1').text('Jackpot!').removeClass('collision-message').addClass('success-message');
     }
 };
