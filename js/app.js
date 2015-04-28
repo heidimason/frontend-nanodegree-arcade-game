@@ -36,24 +36,6 @@ function hideObjects() { // Hides objects so that they are not left on canvas
     key.y = -101;
 }
 
-function increaseLevel() {
-    player.level++;
-    $('h1').text('Level: ' + player.level).removeClass('collision-message').addClass('success-message');
-    player.resetPlayerCoordinates();
-    heart.x = generateXCoordinateOnOrOffCanvas();
-    heart.y = generateYCoordinate();
-    star.x = generateXCoordinateOnOrOffCanvas();
-    star.y = generateYCoordinate();
-    gemOrange.x = generateXCoordinateOnOrOffCanvas();
-    gemOrange.y = generateYCoordinate();
-    gemBlue.x = generateXCoordinateOnOrOffCanvas();
-    gemBlue.y = generateYCoordinate();
-    gemGreen.x = generateXCoordinateOnOrOffCanvas();
-    gemGreen.y = generateYCoordinate();
-    key.x = generateXCoordinateOnOrOffCanvas();
-    key.y = generateYCoordinate();
-}
-
 // Draw objects on the screen, required method for game
 Object.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -136,12 +118,30 @@ var Player = function() {
         this.y = 375; // Returns player to starting Y-coordinate
     };
 
+    this.increaseLevel = function() {
+        this.level++;
+        $('h1').text('Level: ' + this.level).removeClass('collision-message').addClass('success-message');
+        this.resetPlayerCoordinates();
+        heart.x = generateXCoordinateOnOrOffCanvas();
+        heart.y = generateYCoordinate();
+        star.x = generateXCoordinateOnOrOffCanvas();
+        star.y = generateYCoordinate();
+        gemOrange.x = generateXCoordinateOnOrOffCanvas();
+        gemOrange.y = generateYCoordinate();
+        gemBlue.x = generateXCoordinateOnOrOffCanvas();
+        gemBlue.y = generateYCoordinate();
+        gemGreen.x = generateXCoordinateOnOrOffCanvas();
+        gemGreen.y = generateYCoordinate();
+        key.x = generateXCoordinateOnOrOffCanvas();
+        key.y = generateYCoordinate();
+    };
+
     this.increaseScore = function() {
         this.score++;
         if (this.score % 10 !== 0) {
             $('h1').text(this.successMessages[this.randomSuccessMessage] + ' Score: ' + this.score + '/100').removeClass('collision-message').addClass('success-message');
         } else {
-            increaseLevel();
+            this.increaseLevel();
         }
     };
 };
@@ -164,6 +164,7 @@ Player.prototype.update = function() {
 
     if (this.x === star.x && this.y === star.y) {
         this.score += 10;
+        this.increaseLevel();
     }
 
     if ( (this.x === gemOrange.x && this.y === gemOrange.y) || (this.x === gemBlue.x && this.y === gemBlue.y) || (this.x === gemGreen.x && this.y === gemGreen.y) ) {
@@ -244,7 +245,6 @@ Star.prototype.update = function() { // Takes player to next level
         this.x = -101; // Hides star
         this.y = -101; // Hides star
         hideObjects();
-        increaseLevel();
     }
 
     if (key.x === player.x && key.y === player.y) {
