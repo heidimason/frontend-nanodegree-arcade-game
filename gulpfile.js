@@ -15,14 +15,14 @@ gulp.task('styles', function() { // Task to run "styles" methods
   	gulp.src('app/css/*.css') // File(s) source
   		.pipe(plumber())
     	.pipe(minifyCss({compatibility: 'ie8'}))
-    	.pipe(gulp.dest('public/css')); // File(s) destination
+    	.pipe(gulp.dest('public/css')) // File(s) destination
 });
 
 gulp.task('scripts', function() { // Task to run "scripts" methods
 	gulp.src('app/js/*.js') // File(s) source
 		.pipe(plumber())
 		.pipe(uglify())
-		.pipe(gulp.dest('public/js')); // File(s) destination
+		.pipe(gulp.dest('public/js')) // File(s) destination
 });
 
 gulp.task('watch', function() {
