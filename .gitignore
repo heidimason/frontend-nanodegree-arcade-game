@@ -1,1 +1,5 @@
+# production
+/.firebase
+
+# misc
 .DS_Store
