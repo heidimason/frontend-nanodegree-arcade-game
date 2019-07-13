@@ -1,6 +1,7 @@
 {
   "name": "ClassicArcadeGame",
   "version": "1.0.0",
+  "private": true,
   "description": "Light-hearted game with a classic design coded in object-oriented JS",
   "main": "gulpfile.js",
   "scripts": {
